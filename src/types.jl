@@ -17,11 +17,11 @@ end
     Classification(rand(3))
 end
 
-mutable struct Node{LN<:AbstractNode, RN<:AbstractNode}
+mutable struct Node
     feature::Integer
     value
-    left::LN
-    right::RN
+    left
+    right
 end
 
 @testitem "We can create a terminal node" begin
@@ -53,5 +53,14 @@ end
 end
 
 mutable struct Tree
-    root::AbstractNode
+    root
+end
+
+@testitem "We can create a tree with a single node" begin
+    Tree(Regression(0.2))
+end
+
+@testitem "We can split the root of a decision tree" begin
+    t = Tree(Regression(0.2))
+    t.root = Node(1, 0.3, Regression(0.1), Regression(0.2))
 end
