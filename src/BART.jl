@@ -2,6 +2,10 @@ module BART
 
 using TestItems
 
-# Write your package code here.
+include("types.jl")
+export Regression
+export Classification
+export Node
+export Tree
 
 end
