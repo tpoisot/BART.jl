@@ -7,5 +7,11 @@ y, X = BART.bigfoot()
 tree = Tree(y, X)
 
 # We split a node with
-split!(rand(leaves(tree)), tree)
-leaves(tree)
+while depth(tree) < 6
+    split!(rand(leaves(tree)), tree)
+end
+
+# Probability that a node is non terminal
+α = 0.5
+d = depth.(leaves(tree))
+α.^d

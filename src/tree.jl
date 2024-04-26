@@ -11,7 +11,7 @@ end
 
 function Tree(y, X::Matrix)
     p₀ = decider(y)
-    return Tree(y, X, DecisionNode{typeof(p₀)}(collect(axes(X, 1)), missing, missing, p₀, nothing, nothing))
+    return Tree(y, X, DecisionNode{typeof(p₀)}(collect(axes(X, 1)), missing, missing, p₀, nothing, nothing, 0))
 end
 export Tree
 
@@ -27,8 +27,13 @@ mutable struct DecisionNode{T}
     decision::T
     left
     right
+    depth
 end
 export DecisionNode
+
+depth(node::DecisionNode) = node.depth
+depth(tree::Tree) = maximum(depth.(leaves(tree)))
+export depth
 
 isclassifier(::DecisionNode{T}) where {T} = T <: Vector
 isclassifier(tree::Tree) = isclassifier(tree.root)
@@ -50,8 +55,8 @@ function split!(node::DecisionNode, tree::Tree)
     idx_left, idx_right = _generate_valid_split!(node, tree)
     d_left = BART.decider(tree.y, idx_left)
     d_right = BART.decider(tree.y, idx_right)
-    node.left = DecisionNode(idx_left, missing, missing, d_left, nothing, nothing)
-    node.right = DecisionNode(idx_right, missing, missing, d_right, nothing, nothing)
+    node.left = DecisionNode(idx_left, missing, missing, d_left, nothing, nothing, node.depth + 1)
+    node.right = DecisionNode(idx_right, missing, missing, d_right, nothing, nothing, node.depth + 1)
     return node
 end
 
