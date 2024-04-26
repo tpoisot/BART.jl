@@ -1,5 +1,7 @@
 module BART
 
+using Statistics
+
 using TestItems
 
 include("tree.jl")
