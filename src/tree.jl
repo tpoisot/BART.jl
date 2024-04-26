@@ -1,6 +1,3 @@
-abstract type AbstractNode end
-abstract type AbstractLeaf <: AbstractNode end
-
 decider(y::Matrix) = vec(Statistics.mean(y, dims=1))
 decider(y::Vector) = Statistics.mean(y)
 decider(y::Matrix, idx) = decider(y[idx, :])
@@ -16,7 +13,6 @@ function Tree(y, X::Matrix)
     p₀ = decider(y)
     return Tree(y, X, DecisionNode{typeof(p₀)}(collect(axes(X, 1)), missing, missing, p₀, nothing, nothing))
 end
-
 export Tree
 
 """
@@ -24,7 +20,7 @@ export Tree
 
 A decision node that works for both classification and regression.
 """
-mutable struct DecisionNode{T} <: AbstractNode
+mutable struct DecisionNode{T}
     pool
     feature
     value
@@ -32,7 +28,6 @@ mutable struct DecisionNode{T} <: AbstractNode
     left
     right
 end
-
 export DecisionNode
 
 isclassifier(::DecisionNode{T}) where {T} = T <: Vector
@@ -41,13 +36,13 @@ isregressor(a) = !isclassifier(a)
 export isregressor
 export isclassifier
 
-isdecision(node::AbstractNode) = (!isnothing(node.left)) & (!isnothing(node.right))
-isconterminal(node::AbstractNode) = xor(isnothing(node.left), isnothing(node.right))
-isterminal(node::AbstractNode) = !(isdecision(node) | isconterminal(node))
+isdecision(node::DecisionNode) = (!isnothing(node.left)) & (!isnothing(node.right))
+isconterminal(node::DecisionNode) = xor(isnothing(node.left), isnothing(node.right))
+isterminal(node::DecisionNode) = !(isdecision(node) | isconterminal(node))
 
 leaves(::Nothing) = nothing
 leaves(tree::Tree) = leaves(tree.root)
-leaves(node::AbstractNode) = isterminal(node) ? [node] : vcat(leaves(node.left), leaves(node.right))
+leaves(node::DecisionNode) = isterminal(node) ? [node] : vcat(leaves(node.left), leaves(node.right))
 export leaves
 
 function split!(node::DecisionNode, tree::Tree)
