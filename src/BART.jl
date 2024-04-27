@@ -2,11 +2,14 @@ module BART
 
 using Distributions
 using Statistics
+using StatsBase
 using TestItems
 
 Base.@kwdef struct HyperParameters
     k::Float64 = 2.0
     m::Integer = 200
+    α::Float64 = 0.95
+    β::Float64 = 2.0
 end
 export HyperParameters
 
@@ -45,8 +48,8 @@ export swap!
 include("utilities.jl")
 
 include("core.jl")
-include("parameters.jl")
 include("priors.jl")
+include("update.jl")
 
 # Datasets
 include("data/bigfoot.jl")

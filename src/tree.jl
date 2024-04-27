@@ -124,12 +124,14 @@ function update!(node::DecisionNode, tree::Tree)
     else
         if isnothing(node.left)
             node.left = DecisionNode(idx_left, missing, missing, nothing, nothing, node.depth + 1, NodeParameters())
+            updateleaf!(node.left, tree)
         else
             node.left.pool = idx_left
             update!(node.left, tree)
         end
         if isnothing(node.right)
             node.right = DecisionNode(idx_right, missing, missing, nothing, nothing, node.depth + 1, NodeParameters())
+            updateleaf!(node.right, tree)
         else
             node.right.pool = idx_right
             update!(node.right, tree)

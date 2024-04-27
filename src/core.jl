@@ -13,6 +13,7 @@ function g(x::Vector, node::DecisionNode)
 end
 g(x::Vector, tree::Tree) = g(x, tree.root)
 g(X::Matrix, tree::Tree) = g(X, tree.root)
+g(tree::Tree) = g(tree.X, tree.root)
 g(X::Matrix, node::DecisionNode) = vec(mapslices(x -> g(x, node), X, dims=2))
 
 function R(y, X, tree::Tree)
