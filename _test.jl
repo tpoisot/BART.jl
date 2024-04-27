@@ -1,18 +1,14 @@
 using Revise
 using BART
 
-y, X = BART.friedman()
+y, X = BART.friedman(n=100)
 
 # Do the initial tree
 tree = Tree(y, X)
 
 # Let's make some bad splits
 while depth(tree) < 4
-    spl = rand(leaves(tree))
-    while length(spl.pool) < 5
-        spl = rand(leaves(tree))
-    end
-    split!(spl, tree)
+    split!(rand(leaves(tree)), tree)
 end
 
 function g(x::Vector, node::DecisionNode)
