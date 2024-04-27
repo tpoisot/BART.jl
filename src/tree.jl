@@ -1,8 +1,3 @@
-decider(y::Matrix) = vec(Statistics.mean(y, dims=1))
-decider(y::Vector) = Statistics.mean(y)
-decider(y::Matrix, idx) = decider(y[idx, :])
-decider(y::Vector, idx) = decider(y[idx])
-
 """
     Tree
 
@@ -18,29 +13,43 @@ mutable struct Tree
 end
 
 """
+    DecisionNode{T}
+
+A decision node that works for both classification and regression.
+"""
+mutable struct DecisionNode
+    pool
+    feature
+    value
+    left
+    right
+    depth
+    parameters
+end
+
+function updateleaf!(node::DecisionNode, tree::Tree)
+    if isnan(node.parameters.v)
+        node.parameters.v = mean(tree.y[node.pool])
+    end
+    r = BART.R(node, tree)
+    node.parameters.μ = mean(r)
+    node.parameters.σ = std(r)
+    node.parameters.v = node.parameters.μ + node.parameters.σ + rand()
+    return node
+end
+
+
+"""
     Tree(y, X::Matrix)
 
 Creates a tree of depth 0 with the response `y` and features `X`, where the root
 is a terminal node with a response equal to the average of the response.
 """
 function Tree(y, X::Matrix)
-    p₀ = decider(y)
-    return Tree(y, X, DecisionNode(collect(axes(X, 1)), missing, missing, p₀, nothing, nothing, 0))
-end
-
-"""
-    DecisionNode{T}
-
-A decision node that works for both classification and regression.
-"""
-mutable struct DecisionNode{T}
-    pool
-    feature
-    value
-    μ::T
-    left
-    right
-    depth
+    root = DecisionNode(collect(axes(X, 1)), missing, missing, nothing, nothing, 0, NodeParameters())
+    tree = Tree(y, X, root)
+    updateleaf!(tree.root, tree)
+    return tree
 end
 
 """
@@ -113,16 +122,14 @@ function update!(node::DecisionNode, tree::Tree)
         collapse!(node, tree)
         return node
     else
-        d_left = BART.decider(tree.y, idx_left)
-        d_right = BART.decider(tree.y, idx_right)
         if isnothing(node.left)
-            node.left = DecisionNode(idx_left, missing, missing, d_left, nothing, nothing, node.depth + 1)
+            node.left = DecisionNode(idx_left, missing, missing, nothing, nothing, node.depth + 1, NodeParameters())
         else
             node.left.pool = idx_left
             update!(node.left, tree)
         end
         if isnothing(node.right)
-            node.right = DecisionNode(idx_right, missing, missing, d_right, nothing, nothing, node.depth + 1)
+            node.right = DecisionNode(idx_right, missing, missing, nothing, nothing, node.depth + 1, NodeParameters())
         else
             node.right.pool = idx_right
             update!(node.right, tree)
