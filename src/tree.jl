@@ -7,7 +7,9 @@ decider(y::Vector, idx) = decider(y[idx])
     Tree
 
 A tree is a simple datastructure that binds a response `y`, a matrix of features
-`X`, and the tree itself stored in `root`.
+`X`, and the tree itself stored in `root`. When the type is constructed without
+a root, the default behavior is to create a root that is a terminal node of
+depth 0, with a response set to the average of `y`.
 """
 mutable struct Tree
     y
@@ -47,8 +49,6 @@ end
 Returns the depth of a node, which is stored in the node metadata.
 """
 depth(node::DecisionNode) = node.depth
-
-
 
 """
     depth(tree::Tree)
