@@ -132,11 +132,10 @@ function update!(node::DecisionNode, tree::Tree)
 end
 
 """
-    BART.update!(node::DecisionNode, tree::Tree)
+    BART.collapse!(node::DecisionNode, tree::Tree)
 
-Propagates changes to a tree by assigning the correct instances to each node.
-This method is called when the rules are changed, or when nodes are
-created/merged.
+Collapses a decision tree by removing its decision rule, and destroying its left
+and right descendants.
 """
 function collapse!(node::DecisionNode, tree::Tree)
     node.value = missing
