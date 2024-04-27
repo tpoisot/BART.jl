@@ -93,8 +93,8 @@ function update!(node::DecisionNode, tree::Tree)
     if ismissing(node.feature)
         return node
     end
-    idx_left = node.pool[findall(tree.X[node.pool, node.feature] .<= node.value)]
-    idx_right = node.pool[findall(tree.X[node.pool, node.feature] .> node.value)]
+    idx_left = node.pool[findall(tree.X[node.pool, node.feature] .< node.value)]
+    idx_right = node.pool[findall(tree.X[node.pool, node.feature] .>= node.value)]
     if isempty(idx_right) || isempty(idx_left)
         collapse!(node, tree)
         return node

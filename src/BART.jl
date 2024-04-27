@@ -17,6 +17,8 @@ export swap!
 
 include("utilities.jl")
 
+include("core.jl")
+
 # Datasets
 include("data/bigfoot.jl")
 include("data/friedman.jl")
