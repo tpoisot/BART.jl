@@ -13,12 +13,12 @@ function grow!(node::DecisionNode, tree::Tree)
 end
 
 """
-    BART.grow(node::DecisionNode, tree::Treee)
+    BART.grow(node::DecisionNode, tree::Tree)
 
 Creates a copy of the tree, calls `grow!` on it, and returns the modified copy
 of the tree.
 """
-function grow(node::DecisionNode, tree::Treee)
+function grow(node::DecisionNode, tree::Tree)
     ct = deepcopy(tree)
     grow!(node, ct)
     return ct
