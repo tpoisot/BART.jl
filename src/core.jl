@@ -1,9 +1,10 @@
-function g(x::Vector, node::DecisionNode)
+function ℊ(x::Vector, node::DecisionNode)
     if BART.isterminal(node)
-        return node.decision
+        return node.μ
     end
-    return x[node.feature] .< node.value ? g(x, node.left) : g(x, node.right)
+    return x[node.feature] .< node.value ? ℊ(x, node.left) : ℊ(x, node.right)
 end
-g(x::Vector, tree::Tree) = g(x, tree.root)
-g(X::Matrix, tree::Tree) = g(X, tree.root)
-g(X::Matrix, node::DecisionNode) = vec(mapslices(x -> g(x, node), X, dims=2))
+ℊ(x::Vector, tree::Tree) = ℊ(x, tree.root)
+ℊ(X::Matrix, tree::Tree) = ℊ(X, tree.root)
+ℊ(X::Matrix, node::DecisionNode) = vec(mapslices(x -> ℊ(x, node), X, dims=2))
+

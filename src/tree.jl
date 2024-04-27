@@ -37,7 +37,7 @@ mutable struct DecisionNode{T}
     pool
     feature
     value
-    decision::T
+    μ::T
     left
     right
     depth
@@ -82,6 +82,13 @@ swappables(tree::Tree) = swappables(tree.root)
 swappables(node::DecisionNode) = !isswappable(node) ? [nothing] : filter(!isnothing, vcat(node, swappables(node.left), swappables(node.right)))
 export swappables
 
+"""
+    BART.createrule!(node::DecisionNode, tree::Tree)
+
+Creates a new rule for a tree, by assigning a random variable and value for the
+decision at this node. Calling this function will automatically update every
+node downstream of the new rule.
+"""
 function createrule!(node::DecisionNode, tree::Tree)
     node.feature = rand(axes(tree.X, 2))
     node.value = rand(tree.X[node.pool, node.feature])
@@ -89,6 +96,13 @@ function createrule!(node::DecisionNode, tree::Tree)
     return node
 end
 
+"""
+    BART.update!(node::DecisionNode, tree::Tree)
+
+Propagates changes to a tree by assigning the correct instances to each node.
+This method is called when the rules are changed, or when nodes are
+created/merged.
+"""
 function update!(node::DecisionNode, tree::Tree)
     if ismissing(node.feature)
         return node
@@ -117,6 +131,13 @@ function update!(node::DecisionNode, tree::Tree)
     end
 end
 
+"""
+    BART.update!(node::DecisionNode, tree::Tree)
+
+Propagates changes to a tree by assigning the correct instances to each node.
+This method is called when the rules are changed, or when nodes are
+created/merged.
+"""
 function collapse!(node::DecisionNode, tree::Tree)
     node.value = missing
     node.feature = missing

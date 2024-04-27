@@ -18,6 +18,7 @@ export swap!
 include("utilities.jl")
 
 include("core.jl")
+export ℊ
 
 # Datasets
 include("data/bigfoot.jl")
