@@ -27,14 +27,17 @@ mutable struct DecisionNode
     parameters
 end
 
-function updateleaf!(node::DecisionNode, tree::Tree)
+function updateleaf!(node::DecisionNode, tree::Tree; full::Bool=false)
     if isnan(node.parameters.v)
         node.parameters.v = mean(tree.y[node.pool])
+        full = true
     end
-    r = BART.R(node, tree)
-    node.parameters.μ = mean(r)
-    node.parameters.σ = std(r)
-    node.parameters.v = node.parameters.μ + node.parameters.σ + rand()
+    if full
+        r = BART.R(node, tree)
+        node.parameters.μ = mean(r)
+        node.parameters.σ = std(r)
+    end
+    node.parameters.v = node.parameters.μ + node.parameters.σ * randn()
     return node
 end
 

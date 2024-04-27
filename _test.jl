@@ -15,15 +15,18 @@ SP = StateParameters(y, HP)
 R₀ = y .- (HP.m-1)*mean(y)/HP.m
 NP = NodeParameters(mean(R₀), std(R₀), 0.0)
 root = DecisionNode(collect(axes(y,1)), missing, missing, nothing, nothing, 0, deepcopy(NP))
-tree = Tree(y, X, root)
 
-#BART.updateleaf!(tree.root, tree)
 BART.R(tree)
 ensemble = [Tree(y, X, deepcopy(root)) for _ in Base.OneTo(HP.m)]
-for tree in ensemble
-    BART.updateleaf!(tree.root, tree)
+BART.updateleaf!(ensemble[1].root, ensemble[1])
+for i in 2:HP.m
+    ensemble[i].y = BART.R(ensemble[i-1])
+    ensemble[i].root.parameters.μ = mean(ensemble[i].y)
+    ensemble[i].root.parameters.σ = std(ensemble[i].y)
+    BART.updateleaf!(ensemble[i].root, ensemble[i])
 end
-BART.R(ensemble[3])
+
+
 
 # Generate a proposal for growth
 nt = deepcopy(tree)
