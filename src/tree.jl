@@ -130,34 +130,3 @@ function collapse!(node::DecisionNode, tree::Tree)
     end
     return node
 end
-
-function split!(node::DecisionNode, tree::Tree)
-    @assert isterminal(node)
-    BART.createrule!(node, tree)
-    return node
-end
-export split!
-
-function prune!(node::DecisionNode, tree::Tree)
-    @assert isprunable(node)
-    collapse!(node, tree)
-    return node
-end
-export prune!
-
-function changerule!(node::DecisionNode, tree::Tree)
-    @assert !isdecision(node)
-    BART.createrule!(node, tree)
-    return node
-end
-export changerule!
-
-function swaprule!(node::DecisionNode, tree::Tree)
-    @assert isswappable(node)
-    swapwith = rand([node.left, node.right])
-    swapwith.value, node.value = node.value, swapwith.value
-    swapwith.feature, node.feature = node.feature, swapwith.feature
-    update!(node, tree)
-    return node
-end
-export swaprule!

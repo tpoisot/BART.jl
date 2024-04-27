@@ -8,6 +8,7 @@ makedocs(
     pages = [
         "BART.jl" => "index.md",
         "Trees" => "trees.md",
+        "Moves" => "moves.md",
         "Datasets" => "datasets.md",
     ]
 )
