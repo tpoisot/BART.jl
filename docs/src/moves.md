@@ -2,8 +2,7 @@
 
 ```@docs
 grow!
-```
-
-```@docs
-BART.grow
+prune!
+change!
+swap!
 ```
