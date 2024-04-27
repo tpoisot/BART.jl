@@ -26,8 +26,12 @@ function logL(node::DecisionNode, SP::StateParameters)
     if iszero(n)
         return Inf
     end
-    ℒ = 0.5 * (log(SP.σ^2)-log(SP.σ^2+n*SP.σᵤ^2))
-    ℒ -= 0.5 * n * node.parameters.σ^2/SP.σ^2
-    ℒ -= 0.5 * n * node.parameters.μ^2/(n*SP.σᵤ^2+SP.σ^2)
-    return ℒ
+    if !isterminal(node)
+        return logL(node.left, SP) + logL(node.right, SP)
+    else
+        ℒ = 0.5 * (log(SP.σ^2)-log(SP.σ^2+n*SP.σᵤ^2))
+        ℒ -= 0.5 * n * node.parameters.σ^2/SP.σ^2
+        ℒ -= 0.5 * n * node.parameters.μ^2/(n*SP.σᵤ^2+SP.σ^2)
+        return ℒ
+    end
 end

@@ -100,7 +100,7 @@ Propagates changes to a tree by assigning the correct instances to each node.
 This method is called when the rules are changed, or when nodes are
 created/merged.
 """
-function update!(node::DecisionNode, tree::Tree)
+function update!(node::DecisionNode, tree::Tree, SP::StateParameters)
     if ismissing(node.feature)
         return node
     end
@@ -112,17 +112,17 @@ function update!(node::DecisionNode, tree::Tree)
     else
         if isnothing(node.left)
             node.left = DecisionNode(idx_left, missing, missing, nothing, nothing, node.depth + 1, NodeParameters())
-            updateleaf!(node.left, tree)
+            updateleaf!(node.left, SP)
         else
             node.left.pool = idx_left
-            update!(node.left, tree)
+            update!(node.left, tree, SP)
         end
         if isnothing(node.right)
             node.right = DecisionNode(idx_right, missing, missing, nothing, nothing, node.depth + 1, NodeParameters())
-            updateleaf!(node.right, tree)
+            updateleaf!(node.right, SP)
         else
             node.right.pool = idx_right
-            update!(node.right, tree)
+            update!(node.right, tree, SP)
         end
         return node
     end
