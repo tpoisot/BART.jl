@@ -1,10 +1,7 @@
 using Revise
 using BART
 
-y, X = BART.bigfoot()
-
-# This is an example
-x = X[3,:]
+y, X = BART.friedman()
 
 # Do the initial tree
 tree = Tree(y, X)
@@ -25,7 +22,7 @@ function g(x::Vector, node::DecisionNode)
     return x[node.feature] .<= node.value ? g(x, node.left) : g(x, node.right)
 end
 g(x::Vector, tree::Tree) = g(x, tree.root)
-g(X::Matrix, node::DecisionNode) = mapslices(x -> g(x, node), X, dims=2)
+g(X::Matrix, node::DecisionNode) = vec(mapslices(x -> g(x, node), X, dims=2))
 g(X::Matrix, tree::Tree) = g(X, tree.root)
 
 g(X, tree)
