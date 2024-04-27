@@ -4,7 +4,12 @@ using BART
 makedocs(
     sitename = "BART",
     format = Documenter.HTML(),
-    modules = [BART]
+    modules = [BART],
+    pages = [
+        "BART.jl" => "index.md",
+        "Trees" => "trees.md",
+        "Datasets" => "datasets.md",
+    ]
 )
 
 deploydocs(

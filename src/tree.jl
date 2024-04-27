@@ -3,17 +3,28 @@ decider(y::Vector) = Statistics.mean(y)
 decider(y::Matrix, idx) = decider(y[idx, :])
 decider(y::Vector, idx) = decider(y[idx])
 
+"""
+    Tree
+
+A tree is a simple datastructure that binds a response `y`, a matrix of features
+`X`, and the tree itself stored in `root`.
+"""
 mutable struct Tree
     y
     X
     root
 end
 
+"""
+    Tree(y, X::Matrix)
+
+Creates a tree of depth 0 with the response `y` and features `X`, where the root
+is a terminal node with a response equal to the average of the response.
+"""
 function Tree(y, X::Matrix)
     p₀ = decider(y)
     return Tree(y, X, DecisionNode(collect(axes(X, 1)), missing, missing, p₀, nothing, nothing, 0))
 end
-export Tree
 
 """
     DecisionNode{T}
@@ -29,11 +40,22 @@ mutable struct DecisionNode{T}
     right
     depth
 end
-export DecisionNode
 
+"""
+    depth(node::DecisionNode)
+
+Returns the depth of a node, which is stored in the node metadata.
+"""
 depth(node::DecisionNode) = node.depth
+
+
+
+"""
+    depth(tree::Tree)
+
+Returns the depth of a tree, which is measured as the lower depth of its terminal nodes.
+"""
 depth(tree::Tree) = maximum(depth.(leaves(tree)))
-export depth
 
 isterminal(::Nothing) = false
 isdecision(node::DecisionNode) = (!isnothing(node.left)) & (!isnothing(node.right))

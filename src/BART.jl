@@ -6,6 +6,8 @@ using Statistics
 using TestItems
 
 include("tree.jl")
+export Tree
+export DecisionNode
 
 include("utilities.jl")
 
