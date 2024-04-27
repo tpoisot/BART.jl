@@ -1,3 +1,9 @@
+"""
+    BART.bigfoot
+
+Observations (and pseudo-absences) for BigFoot in the eastern United States. The
+predictors are 19 bioclimatic variables.
+"""
 function bigfoot()
     dpath = joinpath(dirname(pathof(@__MODULE__)), "..", "data")
     Z = vcat(permutedims.(split.(readlines(joinpath(dpath, "bigfoot.csv"))[2:end], ","))...)

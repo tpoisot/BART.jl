@@ -12,7 +12,7 @@ export DecisionNode
 include("utilities.jl")
 
 # Datasets
-include("bigfoot.jl")
-include("friedman.jl")
+include("data/bigfoot.jl")
+include("data/friedman.jl")
 
 end
