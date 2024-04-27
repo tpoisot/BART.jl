@@ -15,7 +15,7 @@ export Tree
 export DecisionNode
 
 include("ensemble.jl")
-export BART
+export BARTModel
 
 include("moves.jl")
 export grow!

@@ -3,8 +3,8 @@
 
 The main type
 """
-mutable struct BART
-    tree::Vector{Tree}
+mutable struct BARTModel
+    trees::Vector{Tree}
     state::StateParameters
     hyperparameters::HyperParameters
 end
