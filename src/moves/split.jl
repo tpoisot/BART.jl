@@ -1,11 +1,3 @@
-using Revise
-using BART
-
-using Statistics
-using Distributions
-
-y, X = BART.friedman(n=100)
-mod = BARTModel(y, X)
 
 function perform_split!(node::DecisionNode, tree::Tree, SP::StateParameters)
     R₀ = BART.R(tree)
@@ -47,5 +39,3 @@ function propose_split!(tree::Tree, SP::StateParameters, HP::HyperParameters)
     end
     return node
 end
-
-propose_split!(mod.trees[1], mod.state, mod.hyperparameters)

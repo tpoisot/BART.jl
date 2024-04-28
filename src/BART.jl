@@ -17,13 +17,12 @@ export DecisionNode
 include("ensemble.jl")
 export BARTModel
 
-include("moves.jl")
+include("moves/split.jl")
 export grow!
 export prune!
 export change!
 export swap!
 
-include("utilities.jl")
 
 include("core.jl")
 include("priors.jl")
