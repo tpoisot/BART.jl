@@ -29,7 +29,7 @@ function propose_prune!(tree::Tree, SP::StateParameters, HP::HyperParameters)
     L_proposal = node_likelihood(node, SP)
 
     # Likelihood ratio (using logs!)
-    a = (1-p_node_nt)*p_grow
+    a = (1-p_node_nt)*n_prun*p_grow
     a /= (1-p_left_nt)*(1-p_right_nt)*p_node_nt*(n_term-1)*(1-p_grow)
     a *= exp(L_proposal - L_node)
 
