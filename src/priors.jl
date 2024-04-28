@@ -1,37 +1,47 @@
-function Pnonterm(node::DecisionNode, HP::HyperParameters)
+"""
+    probability_nonterminal(node::DecisionNode, HP::HyperParameters)
+
+The probability that a node is non-terminal is ``α(1+d)^{-β}``, where ``d`` is
+the depth of the node - the root has depth of 0.
+"""
+function probability_nonterminal(node::DecisionNode, HP::HyperParameters)
     return HP.α*(BART.depth(node)+1)^(-HP.β)
 end
 
 """
-    Pt
+    prior_for_node(node::DecisionNode, HP::HyperParameters)
 
-Log of the prior for the tree
+This is the *log* of the prior probabilit for a given tree, which accounts for
+the probability that the node is non-terminal, as well as the number of
+instances currently retained in this node.
+
+See also [`BART.probability_nonterminal`](@ref)
 """
-function Pt(node::DecisionNode, HP::HyperParameters)
-    P = log(Pnonterm(node, HP))
+function prior_for_node(node::DecisionNode, HP::HyperParameters)
+    ntp = probability_nonterminal(node, HP)
     if BART.isterminal(node)
-        return 1-P
-    else
-        P -= log(length(node.pool))
-        P += Pt(node.left, HP)
-        P += Pt(node.right, HP) 
+        return log(1-ntp)
     end
+    P = log(ntp/length(node.pool))
+    P += prior_for_node(node.left, HP)
+    P += prior_for_node(node.right, HP) 
     return P
 end
-Pt(tree::Tree, HP::HyperParameters) = Pt(tree.root, HP)
 
 """
-    logL
+    node_likelihood(node::DecisionNode, SP::StateParameters)
 
-Log of the node likelihood
+This the *log* of the likelihood of a given node, measured iteratively.
+
+See also [`BART.prior_for_node`](@ref)
 """
-function logL(node::DecisionNode, SP::StateParameters)
-    n = length(node.pool)
-    if iszero(n)
+function node_likelihood(node::DecisionNode, SP::StateParameters)
+    if isempty(n)
         return Inf
     end
+    n = length(node.pool)
     if !isterminal(node)
-        return logL(node.left, SP) + logL(node.right, SP)
+        return node_likelihood(node.left, SP) + node_likelihood(node.right, SP)
     else
         ℒ = 0.5 * (log(SP.σ^2)-log(SP.σ^2+n*SP.σᵤ^2))
         ℒ -= 0.5 * n * node.parameters.σ^2/SP.σ^2
