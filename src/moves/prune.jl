@@ -8,8 +8,8 @@ function propose_prune!(tree::Tree, SP::StateParameters, HP::HyperParameters)
     node.feature, node.value = missing, missing
     node.left, node.right = nothing, nothing
     proposal = BART.logL(node, SP)
-    Pc = (1-Pnonterm(node, HP))*nprun*1/2
-    Pc /= (1-Pnonterm(oldleft, HP))*(1-Pnonterm(oldright, HP))*Pnonterm(node, HP)*(nterm-1)*1/2
+    Pc = (1 - Pnonterm(node, HP)) * nprun * 1 / 2
+    Pc /= (1 - Pnonterm(oldleft, HP)) * (1 - Pnonterm(oldright, HP)) * Pnonterm(node, HP) * (nterm - 1) * 1 / 2
     Pc *= exp(proposal - baseline)
     if rand() > Pc
         node.feature = oldfeature
