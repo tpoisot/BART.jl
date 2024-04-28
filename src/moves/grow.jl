@@ -1,12 +1,39 @@
 function propose_grow!(tree::Tree, SP::StateParameters, HP::HyperParameters)
+    # We pick a node at random among the terminal nodes
     node = rand(leaves(tree))
+    
+    # And we update its output value
     BART.updateleaf!(node, SP)
-    baseline = BART.Pt(node, HP) + BART.logL(node, SP)
+    
+    # Number of terminal nodes
+    n_term = length(leaves(tree))
+
+    # Probability that the node is not terminal and log-likelihood
+    p_node_nt = probability_nonterminal(node, HP)
+    L_node = node_likelihood(node, SP)
+    
+    # New rule for the node
     node.feature = rand(axes(tree.X, 2))
     node.value = rand(tree.X[node.pool, node.feature])
+
+    # Implementation of the new rule
     perform_grow!(node, tree, SP)
-    proposal = BART.Pt(node, HP) + BART.logL(node, SP)
-    Pc = min(exp(proposal - baseline), 1.0)
+
+    # Likelihood for the new nodes
+    L_left, L_right = node_likelihood(node.left, SP), node_likelihood(node.right, SP)
+    p_left_nt, p_right_nt = probability_nonterminal(node.left, HP), probability_nonterminal(node.right, HP)
+
+    # How many nodes that can be pruned now?
+    n_prun = length(prunables(tree))
+
+    # L + ratio
+    initial_p_growth = iszero(node.depth) ? 1.0 : 0.5
+    a = (1/2)*(1-p_left_nt)*(1-p_right_nt)*n_term*p_node_nt
+    a /= initial_p_growth*(1-p_node_nt)*n_prun
+    a *= exp(L_left + L_right - L_node)
+    
+    # Probability of accepting the move
+    Pc = exp(a)
     if rand() > Pc
         node.feature = missing
         node.value = missing
