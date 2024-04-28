@@ -36,7 +36,7 @@ This the *log* of the likelihood of a given node, measured iteratively.
 See also [`BART.prior_for_node`](@ref)
 """
 function node_likelihood(node::DecisionNode, SP::StateParameters)
-    if isempty(n)
+    if isempty(node.pool)
         return Inf
     end
     n = length(node.pool)
