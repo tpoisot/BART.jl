@@ -1,5 +1,22 @@
+function propose_grow!(tree::Tree, SP::StateParameters, HP::HyperParameters)
+    node = rand(leaves(tree))
+    BART.updateleaf!(node, SP)
+    baseline = BART.Pt(node, HP) + BART.logL(node, SP)
+    node.feature = rand(axes(tree.X, 2))
+    node.value = rand(tree.X[node.pool, node.feature])
+    perform_grow!(node, tree, SP)
+    proposal = BART.Pt(node, HP) + BART.logL(node, SP)
+    Pc = min(exp(proposal - baseline), 1.0)
+    if rand() > Pc
+        node.feature = missing
+        node.value = missing
+        node.left = nothing
+        node.right = nothing
+    end
+    return node
+end
 
-function perform_split!(node::DecisionNode, tree::Tree, SP::StateParameters)
+function perform_grow!(node::DecisionNode, tree::Tree, SP::StateParameters)
     R₀ = BART.R(tree)
     if length(node.pool) <= 2
         return node
@@ -19,23 +36,5 @@ function perform_split!(node::DecisionNode, tree::Tree, SP::StateParameters)
     node.right.parameters.σ = sqrt(mean((R₀[node.right.pool] .- mean(R₀[node.right.pool])) .^ 2))
     BART.updateleaf!(node.left, SP)
     BART.updateleaf!(node.right, SP)
-    return node
-end
-
-function propose_split!(tree::Tree, SP::StateParameters, HP::HyperParameters)
-    node = rand(leaves(tree))
-    BART.updateleaf!(node, SP)
-    baseline = BART.Pt(node, HP) + BART.logL(node, SP)
-    node.feature = rand(axes(tree.X, 2))
-    node.value = rand(tree.X[node.pool, node.feature])
-    perform_split!(node, tree, SP)
-    proposal = BART.Pt(node, HP) + BART.logL(node, SP)
-    Pc = min(exp(proposal - baseline), 1.0)
-    if rand() > Pc
-        node.feature = missing
-        node.value = missing
-        node.left = nothing
-        node.right = nothing
-    end
     return node
 end

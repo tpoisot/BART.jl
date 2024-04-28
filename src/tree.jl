@@ -56,6 +56,7 @@ depth(tree::Tree) = maximum(depth.(leaves(tree)))
 
 isterminal(::Nothing) = false
 isdecision(node::DecisionNode) = (!isnothing(node.left)) & (!isnothing(node.right))
+isprunable(node::DecisionNode) = (!isterminal(node)) & (isterminal(node.left)&isterminal(node.right))
 isterminal(node::DecisionNode) = isnothing(node.left) & isnothing(node.right)
 isswappable(node::DecisionNode) = !isterminal(node) & (!isterminal(node.left) | !isterminal(node.right))
 

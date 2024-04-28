@@ -1,10 +1,14 @@
+function Pnonterm(node::DecisionNode, HP::HyperParameters)
+    return HP.α*(BART.depth(node)+1)^(-HP.β)
+end
+
 """
     Pt
 
 Log of the prior for the tree
 """
 function Pt(node::DecisionNode, HP::HyperParameters)
-    P = log(HP.α*(BART.depth(node)+1)^(-HP.β))
+    P = log(Pnonterm(node, HP))
     if BART.isterminal(node)
         return 1-P
     else
