@@ -1,5 +1,5 @@
 """
-    probability_nonterminal(node::DecisionNode, HP::HyperParameters)
+    BART.probability_nonterminal(node::DecisionNode, HP::HyperParameters)
 
 The probability that a node is non-terminal is ``α(1+d)^{-β}``, where ``d`` is
 the depth of the node - the root has depth of 0.
@@ -9,7 +9,7 @@ function probability_nonterminal(node::DecisionNode, HP::HyperParameters)
 end
 
 """
-    prior_for_node(node::DecisionNode, HP::HyperParameters)
+    BART.prior_for_node(node::DecisionNode, HP::HyperParameters)
 
 This is the *log* of the prior probabilit for a given tree, which accounts for
 the probability that the node is non-terminal, as well as the number of
@@ -29,7 +29,7 @@ function prior_for_node(node::DecisionNode, HP::HyperParameters)
 end
 
 """
-    node_likelihood(node::DecisionNode, SP::StateParameters)
+    BART.node_likelihood(node::DecisionNode, SP::StateParameters)
 
 This the *log* of the likelihood of a given node, measured iteratively.
 
