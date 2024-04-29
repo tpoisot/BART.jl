@@ -14,6 +14,8 @@ include("tree.jl")
 export Tree
 export DecisionNode
 
+include("traversal.jl")
+
 include("ensemble.jl")
 export BARTModel
 
